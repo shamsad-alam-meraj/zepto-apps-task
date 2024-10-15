@@ -18,7 +18,15 @@ async function fetchBooks() {
   filteredBooks = books;
   displayBooks();
   populateGenres();
+  updatePaginationButtons(data);
 }
+
+function updatePaginationButtons(data) {
+  prevPageButton.disabled = currentPage === 1 ? data.previous : !data.previous;
+  nextPageButton.disabled = !data.next;
+}
+
+currentPageElement.textContent = currentPage;
 
 // Display books with wishlist status
 function displayBooks() {
@@ -34,19 +42,27 @@ function displayBooks() {
     const isWishlisted = wishlist.some(
       (wishlistBook) => wishlistBook.id === book.id
     );
+    const authorNames = book.authors.map((author) => author.name).join(", ");
 
     bookCard.innerHTML = `
-        <img src="${book.formats["image/jpeg"]}" alt="${book.title}">
-        <h3>${book.title}</h3>
-        <p>by ${book.authors.map((author) => author.name).join(", ")}</p>
+        <a href="book-details.html?id=${book.id}">
+          <img src="${book.formats["image/jpeg"]}" alt="${book.title}">
+        </a>
+        <h3>
+          <a href="book-details.html?id=${book.id}">${book.title}</a>
+        </h3>
+        <p>by ${authorNames}</p>
         <p>ID: ${book.id}</p>
         <button class="wishlist-btn ${
           isWishlisted ? "wishlisted" : ""
-        }" data-id="${book.id}">❤️</button>
+        }" data-id="${book.id}">
+          ${isWishlisted ? "Wishlisted ❤️" : "Add to Wishlist ❤️"}
+        </button>
       `;
     booksContainer.appendChild(bookCard);
   });
-  // Add event listener to wishlist button
+
+  // Add event listener to wishlist buttons
   document.querySelectorAll(".wishlist-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       const bookId = parseInt(btn.getAttribute("data-id"));

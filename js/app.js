@@ -47,11 +47,21 @@ function displayBooks() {
         <a href="book-details.html?id=${book.id}">
           <img src="${book.formats["image/jpeg"]}" alt="${book.title}">
         </a>
-        <h3>
-          <a href="book-details.html?id=${book.id}">${book.title}</a>
-        </h3>
-        <p>by ${authorNames}</p>
-        <p>ID: ${book.id}</p>
+       <p>
+         <a href="book-details.html?id=${book.id}">
+          ${
+            book.title.length > 15
+              ? book.title.substring(0, 15) + "..."
+              : book.title
+          }
+          </a>
+       </p>
+        <p>by ${
+          authorNames.length > 15
+            ? authorNames.substring(0, 15) + "..."
+            : authorNames
+        } </p>
+        <p>Book ID: ${book.id}</p>
         <button class="wishlist-btn ${
           isWishlisted ? "wishlisted" : ""
         }" data-id="${book.id}">

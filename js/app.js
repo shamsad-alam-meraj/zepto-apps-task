@@ -120,11 +120,15 @@ function loadPreferences() {
   if (savedSearch) {
     searchInput.value = savedSearch;
     handleSearch(savedSearch);
+    localStorage.removeItem("genre");
+    genreFilter.value = "";
   }
 
   if (savedGenre) {
     genreFilter.value = savedGenre;
     handleGenreChange(savedGenre);
+    localStorage.removeItem("search");
+    searchInput.value = "";
   }
 }
 
@@ -143,11 +147,11 @@ searchInput.addEventListener("keydown", async (e) => {
 genreFilter.addEventListener("change", async (e) => {
   const selectedGenre = e.target.value;
   localStorage.setItem("genre", selectedGenre);
-  localStorage.removeItem("search");
-  searchInput.value = "";
 
   if (selectedGenre) {
     handleGenreChange(selectedGenre);
+    localStorage.removeItem("search");
+    searchInput.value = "";
   } else {
     filteredBooks = books;
     currentPage = 1;

@@ -17,17 +17,24 @@ const savedGenre = localStorage.getItem("genre") || "";
 
 // Fetch books from the API
 async function fetchBooks(url = "https://gutendex.com/books/") {
-  const response = await fetch(url);
-  const data = await response.json();
+  showLoader();
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
 
-  books = data.results;
-  filteredBooks = books;
-  nextUrl = data.next;
-  previousUrl = data.previous;
+    books = data.results;
+    filteredBooks = books;
+    nextUrl = data.next;
+    previousUrl = data.previous;
 
-  displayBooks();
-  populateGenres();
-  updatePaginationButtons();
+    displayBooks();
+    populateGenres();
+    updatePaginationButtons();
+  } catch (error) {
+    console.error("Error fetching books:", error);
+  } finally {
+    hideLoader();
+  }
 }
 
 // Update pagination buttons' disabled state
@@ -150,6 +157,7 @@ genreFilter.addEventListener("change", async (e) => {
 
 // Search handling function
 async function handleSearch(searchText) {
+  showLoader();
   try {
     const response = await fetch(
       `https://gutendex.com/books/?search=${encodeURIComponent(searchText)}`
@@ -160,13 +168,16 @@ async function handleSearch(searchText) {
     previousUrl = data.previous;
     currentPage = 1;
     displayBooks();
+    hideLoader();
   } catch (error) {
     console.error("Error fetching books:", error);
+    hideLoader();
   }
 }
 
 // Genre change handling function
 async function handleGenreChange(selectedGenre) {
+  showLoader();
   try {
     const response = await fetch(
       `https://gutendex.com/books/?topic=${encodeURIComponent(selectedGenre)}`
@@ -177,8 +188,10 @@ async function handleGenreChange(selectedGenre) {
     previousUrl = data.previous;
     currentPage = 1;
     displayBooks();
+    hideLoader();
   } catch (error) {
     console.error("Error fetching books by topic:", error);
+    hideLoader();
   }
 }
 
@@ -232,6 +245,24 @@ clearSearchIcon.addEventListener("click", () => {
   localStorage.removeItem("search");
   fetchBooks();
 });
+
+function showLoader() {
+  const loader = document.getElementById("loader");
+  if (loader) {
+    loader.classList.remove("hidden");
+  } else {
+    console.error("Loader element not found");
+  }
+}
+
+function hideLoader() {
+  const loader = document.getElementById("loader");
+  if (loader) {
+    loader.classList.add("hidden");
+  } else {
+    console.error("Loader element not found");
+  }
+}
 
 if (savedGenre || savedSearch) {
   // Load saved preferences on page load

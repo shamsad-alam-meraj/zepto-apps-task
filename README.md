@@ -28,6 +28,8 @@ The Book Library App is a front-end project that fetches data from the Gutenberg
 - **Responsive Design**: The layout is fully responsive, ensuring a seamless experience on both desktop and mobile devices.
 
 - **User Interface**: Includes a homepage, a wishlist page, and individual book detail pages with a navigation bar.
+  
+- **Loader**: A loading indicator is implemented on both the book list and details pages, providing feedback to users while content is being fetched.
 
 ## Technologies Used
 

@@ -41,7 +41,7 @@ The Book Library App is a front-end project that fetches data from the Gutenberg
 
    ```
 
-2. ```bash cd zepto-apps-task
+2. ```cd zepto-apps-task
 
    ```
 

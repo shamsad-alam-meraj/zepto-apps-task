@@ -36,5 +36,5 @@ The Book Library App is a front-end project that fetches data from the Gutenberg
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/shamsad-alam-meraj/zepto-apps-task.git
    ```

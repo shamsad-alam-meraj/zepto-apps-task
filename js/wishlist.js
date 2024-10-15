@@ -28,10 +28,12 @@ function displayWishlist() {
   wishlist.forEach((book) => {
     const bookCard = document.createElement("div");
     bookCard.classList.add("book-card");
+    const imageUrl =
+      book.formats["image/jpeg"] || "../images/default_image.jpg";
     const authorNames = book.authors.map((author) => author.name).join(", ");
     bookCard.innerHTML = `
            <a href="book-details.html?id=${book.id}">
-          <img src="${book.formats["image/jpeg"]}" alt="${book.title}">
+          <img src="${imageUrl}" alt="${book.title}">
         </a>
        <p>
          <a href="book-details.html?id=${book.id}">
@@ -54,6 +56,9 @@ function displayWishlist() {
         `;
 
     wishlistContainer.appendChild(bookCard);
+    setTimeout(() => {
+      bookCard.classList.add("visible");
+    }, 10);
   });
 
   // Add event listeners to remove buttons

@@ -106,7 +106,9 @@ body {
   text-align: center;
   max-width: 250px;
   width: 100%;
-  transition: transform 0.2s ease-in-out;
+  opacity: 0;
+  transform: translateX(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .book-card a {
@@ -121,6 +123,11 @@ body {
   height: 250px;
   border-radius: 10px;
   margin-bottom: 15px;
+}
+
+.book-card.visible {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .wishlist-btn {

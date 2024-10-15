@@ -35,6 +35,24 @@ The Book Library App is a front-end project that fetches data from the Gutenberg
 ## Installation
 
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/shamsad-alam-meraj/zepto-apps-task.git
+
+   ```bash git clone https://github.com/shamsad-alam-meraj/zepto-apps-task.git
+
    ```
+
+2. `bash cd zepto-apps-task`
+3. Open the project folder in Visual Studio Code:
+
+- Launch Visual Studio Code.
+- Click on File in the menu, then select Open Folder....
+- Navigate to the zepto-apps-task folder you just cloned and click Open.
+
+4. Open the index.html file:
+
+- Locate the index.html file in the Explorer panel on the left side of VS Code.
+- Right-click on index.html and select Open with Live Server.
+  - If you don't have the Live Server extension installed, you can install it from the Extensions marketplace within VS Code.
+
+5. View the application in your web browser:
+
+- Live Server will open the index.html file in your default web browser, allowing you to interact with the application in real time.

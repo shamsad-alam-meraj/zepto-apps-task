@@ -44,7 +44,7 @@ function displayBooks() {
     const bookCard = document.createElement("div");
     bookCard.classList.add("book-card");
     const isWishlisted = wishlist.some(
-      (wishlistBook) => wishlistBook.id === book.id
+      (wishlistBook) => wishlistBook?.id === book?.id
     );
     const authorNames = book.authors.map((author) => author.name).join(", ");
     const imageUrl =
@@ -83,7 +83,8 @@ function displayBooks() {
   document.querySelectorAll(".wishlist-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       const bookId = parseInt(btn.getAttribute("data-id"));
-      const book = books.find((b) => b.id === bookId);
+      let selectedBooks = filteredBooks || books;
+      const book = selectedBooks.find((b) => b.id === bookId);
       toggleWishlist(book);
     });
   });
@@ -195,12 +196,13 @@ function getWishlist() {
 }
 
 function toggleWishlist(book) {
+  console.log(book);
   let wishlist = getWishlist();
   const isBookInWishlist = wishlist.some(
-    (wishlistBook) => wishlistBook.id === book.id
+    (wishlistBook) => wishlistBook?.id === book?.id
   );
   if (isBookInWishlist) {
-    wishlist = wishlist.filter((wishlistBook) => wishlistBook.id !== book.id);
+    wishlist = wishlist.filter((wishlistBook) => wishlistBook?.id !== book?.id);
   } else {
     wishlist.push(book);
   }

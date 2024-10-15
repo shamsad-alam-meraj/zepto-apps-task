@@ -4,6 +4,7 @@ const genreFilter = document.getElementById("genre-filter");
 const currentPageElement = document.getElementById("current-page");
 const prevPageButton = document.getElementById("prev-page");
 const nextPageButton = document.getElementById("next-page");
+const clearSearchIcon = document.getElementById("clear-search");
 
 let books = [];
 let filteredBooks = [];
@@ -199,6 +200,7 @@ function getWishlist() {
   return JSON.parse(localStorage.getItem("wishlist")) || [];
 }
 
+// Toggle book's wishlist status and update the UI accordingly
 function toggleWishlist(book) {
   console.log(book);
   let wishlist = getWishlist();
@@ -213,6 +215,23 @@ function toggleWishlist(book) {
   localStorage.setItem("wishlist", JSON.stringify(wishlist));
   displayBooks();
 }
+
+// Show or hide the clear icon based on the search input
+searchInput.addEventListener("input", () => {
+  if (searchInput.value.length > 0) {
+    clearSearchIcon.classList.add("visible");
+  } else {
+    clearSearchIcon.classList.remove("visible");
+  }
+});
+
+// Clear search input and show main list
+clearSearchIcon.addEventListener("click", () => {
+  searchInput.value = "";
+  clearSearchIcon.classList.remove("visible");
+  localStorage.removeItem("search");
+  fetchBooks();
+});
 
 if (savedGenre || savedSearch) {
   // Load saved preferences on page load

@@ -31,7 +31,10 @@ function displayBooks() {
   booksToShow.forEach((book) => {
     const bookCard = document.createElement("div");
     bookCard.classList.add("book-card");
-    const isWishlisted = wishlist.includes(book.id);
+    const isWishlisted = wishlist.some(
+      (wishlistBook) => wishlistBook.id === book.id
+    );
+
     bookCard.innerHTML = `
         <img src="${book.formats["image/jpeg"]}" alt="${book.title}">
         <h3>${book.title}</h3>
@@ -43,12 +46,12 @@ function displayBooks() {
       `;
     booksContainer.appendChild(bookCard);
   });
-
-  // Add event listener to wishlist buttons
+  // Add event listener to wishlist button
   document.querySelectorAll(".wishlist-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       const bookId = parseInt(btn.getAttribute("data-id"));
-      toggleWishlist(bookId);
+      const book = books.find((b) => b.id === bookId);
+      toggleWishlist(book);
     });
   });
 }
@@ -70,14 +73,22 @@ function populateGenres() {
   });
 }
 
-// Search filter
-searchInput.addEventListener("input", (e) => {
-  const searchText = e.target.value.toLowerCase();
-  filteredBooks = books.filter((book) =>
-    book.title.toLowerCase().includes(searchText)
-  );
-  currentPage = 1;
-  displayBooks();
+// Search Books
+searchInput.addEventListener("keydown", async (e) => {
+  if (e.key === "Enter") {
+    const searchText = e.target.value.toLowerCase();
+    try {
+      const response = await fetch(
+        `https://gutendex.com/books/?search=${encodeURIComponent(searchText)}`
+      );
+      const data = await response.json();
+      filteredBooks = data.results;
+      currentPage = 1;
+      displayBooks();
+    } catch (error) {
+      console.error("Error fetching books:", error);
+    }
+  }
 });
 
 // Genre filter
@@ -109,19 +120,23 @@ prevPageButton.addEventListener("click", () => {
 
 // Fetch wishlist from localStorage
 function getWishlist() {
-    return JSON.parse(localStorage.getItem('wishlist')) || [];
-  }
+  return JSON.parse(localStorage.getItem("wishlist")) || [];
+}
 
-  // Add to/remove from wishlist
-function toggleWishlist(bookId) {
-    let wishlist = getWishlist();
-    if (wishlist.includes(bookId)) {
-      wishlist = wishlist.filter(id => id !== bookId);
-    } else {
-      wishlist.push(bookId);
-    }
-    localStorage.setItem('wishlist', JSON.stringify(wishlist));
-    displayBooks();
+// Add to/remove from wishlist
+function toggleWishlist(book) {
+  let wishlist = getWishlist();
+  const isBookInWishlist = wishlist.some(
+    (wishlistBook) => wishlistBook.id === book.id
+  );
+  if (isBookInWishlist) {
+    wishlist = wishlist.filter((wishlistBook) => wishlistBook.id !== book.id);
+  } else {
+    wishlist.push(book);
   }
+  localStorage.setItem("wishlist", JSON.stringify(wishlist));
+  displayBooks();
+}
 
+// Initial render of the books
 fetchBooks();

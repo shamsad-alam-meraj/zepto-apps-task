@@ -126,6 +126,7 @@ searchInput.addEventListener("keydown", async (e) => {
     const searchText = e.target.value.toLowerCase();
     localStorage.setItem("search", searchText);
     handleSearch(searchText);
+    localStorage.getItem("genre")
   }
 });
 
@@ -133,6 +134,7 @@ searchInput.addEventListener("keydown", async (e) => {
 genreFilter.addEventListener("change", async (e) => {
   const selectedGenre = e.target.value;
   localStorage.setItem("genre", selectedGenre);
+  localStorage.removeItem("search");
 
   if (selectedGenre) {
     handleGenreChange(selectedGenre);

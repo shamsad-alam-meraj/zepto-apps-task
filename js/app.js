@@ -9,34 +9,33 @@ let books = [];
 let filteredBooks = [];
 let currentPage = 1;
 const booksPerPage = 10;
+let nextUrl = null;
+let previousUrl = null;
 
-// Fetch books from API
-async function fetchBooks() {
-  const response = await fetch("https://gutendex.com/books/");
+async function fetchBooks(url = "https://gutendex.com/books/") {
+  const response = await fetch(url);
   const data = await response.json();
+
   books = data.results;
   filteredBooks = books;
+  nextUrl = data.next;
+  previousUrl = data.previous;
+
   displayBooks();
   populateGenres();
-  updatePaginationButtons(data);
+  updatePaginationButtons();
 }
 
-function updatePaginationButtons(data) {
-  prevPageButton.disabled = currentPage === 1 ? data.previous : !data.previous;
-  nextPageButton.disabled = !data.next;
+function updatePaginationButtons() {
+  prevPageButton.disabled = !previousUrl ? true : false;
+  nextPageButton.disabled = !nextUrl ? true : false;
 }
 
-currentPageElement.textContent = currentPage;
-
-// Display books with wishlist status
 function displayBooks() {
   booksContainer.innerHTML = "";
   const wishlist = getWishlist();
-  const start = (currentPage - 1) * booksPerPage;
-  const end = start + booksPerPage;
-  const booksToShow = filteredBooks.slice(start, end);
 
-  booksToShow.forEach((book) => {
+  filteredBooks.forEach((book) => {
     const bookCard = document.createElement("div");
     bookCard.classList.add("book-card");
     const isWishlisted = wishlist.some(
@@ -62,7 +61,6 @@ function displayBooks() {
     booksContainer.appendChild(bookCard);
   });
 
-  // Add event listener to wishlist buttons
   document.querySelectorAll(".wishlist-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       const bookId = parseInt(btn.getAttribute("data-id"));
@@ -72,12 +70,11 @@ function displayBooks() {
   });
 }
 
-// Populate genre dropdown dynamically
 function populateGenres() {
   const genres = new Set();
   books.forEach((book) => {
     if (book.subjects && book.subjects.length) {
-      book.subjects.forEach((subject) => genres.add(subject));
+      book.bookshelves.forEach((subject) => genres.add(subject));
     }
   });
 
@@ -89,7 +86,6 @@ function populateGenres() {
   });
 }
 
-// Search Books
 searchInput.addEventListener("keydown", async (e) => {
   if (e.key === "Enter") {
     const searchText = e.target.value.toLowerCase();
@@ -99,6 +95,8 @@ searchInput.addEventListener("keydown", async (e) => {
       );
       const data = await response.json();
       filteredBooks = data.results;
+      nextUrl = data.next;
+      previousUrl = data.previous;
       currentPage = 1;
       displayBooks();
     } catch (error) {
@@ -108,38 +106,46 @@ searchInput.addEventListener("keydown", async (e) => {
 });
 
 // Genre filter
-genreFilter.addEventListener("change", (e) => {
+genreFilter.addEventListener("change", async (e) => {
   const selectedGenre = e.target.value;
-  filteredBooks = selectedGenre
-    ? books.filter(
-        (book) => book.subjects && book.subjects.includes(selectedGenre)
-      )
-    : books;
-  currentPage = 1;
-  displayBooks();
+  if (selectedGenre) {
+    try {
+      const response = await fetch(
+        `https://gutendex.com/books/?topic=${encodeURIComponent(selectedGenre)}`
+      );
+      const data = await response.json();
+      filteredBooks = data.results;
+      nextUrl = data.next;
+      previousUrl = data.previous;
+      currentPage = 1;
+      displayBooks();
+    } catch (error) {
+      console.error("Error fetching books by topic:", error);
+    }
+  } else {
+    filteredBooks = books;
+    currentPage = 1;
+    displayBooks();
+  }
 });
 
 // Pagination
 nextPageButton.addEventListener("click", () => {
-  if (currentPage * booksPerPage < filteredBooks.length) {
-    currentPage++;
-    displayBooks();
+  if (nextUrl) {
+    fetchBooks(nextUrl);
   }
 });
 
 prevPageButton.addEventListener("click", () => {
-  if (currentPage > 1) {
-    currentPage--;
-    displayBooks();
+  if (previousUrl) {
+    fetchBooks(previousUrl);
   }
 });
 
-// Fetch wishlist from localStorage
 function getWishlist() {
   return JSON.parse(localStorage.getItem("wishlist")) || [];
 }
 
-// Add to/remove from wishlist
 function toggleWishlist(book) {
   let wishlist = getWishlist();
   const isBookInWishlist = wishlist.some(
@@ -154,5 +160,4 @@ function toggleWishlist(book) {
   displayBooks();
 }
 
-// Initial render of the books
 fetchBooks();

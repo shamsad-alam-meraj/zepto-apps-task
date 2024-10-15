@@ -213,6 +213,7 @@ body {
   padding: 8px 16px;
   cursor: pointer;
   margin-top: 10px;
+  border-radius: 10px;
 }
 
 .remove-btn:hover {

@@ -28,12 +28,26 @@ function displayWishlist() {
   wishlist.forEach((book) => {
     const bookCard = document.createElement("div");
     bookCard.classList.add("book-card");
-
+    const authorNames = book.authors.map((author) => author.name).join(", ");
     bookCard.innerHTML = `
+           <a href="book-details.html?id=${book.id}">
           <img src="${book.formats["image/jpeg"]}" alt="${book.title}">
-          <h3>${book.title}</h3>
-          <p>by ${book.authors.map((author) => author.name).join(", ")}</p>
-          <p>ID: ${book.id}</p>
+        </a>
+       <p>
+         <a href="book-details.html?id=${book.id}">
+          ${
+            book.title.length > 15
+              ? book.title.substring(0, 15) + "..."
+              : book.title
+          }
+          </a>
+       </p>
+        <p>by ${
+          authorNames.length > 15
+            ? authorNames.substring(0, 15) + "..."
+            : authorNames
+        } </p>
+        <p>Book ID: ${book.id}</p>
           <button class="remove-btn" data-id="${
             book.id
           }">Remove from Wishlist</button>
